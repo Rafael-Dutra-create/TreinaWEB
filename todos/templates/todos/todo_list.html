@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+    {% block page_title %}
+        Lista de Tarefas
+    {% endblock page_title %}
+
+    {% block content %}
+            <h1>Lista de Tarefas</h1>
+
+            
+
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Título</th>
+                        <th scope="col">Data de criação</th>
+                        <th scope="col">Data de entrega</th>
+                        <th scope="col">Finalizado em:</th>
+                        <th scope"col">Ações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for todo in todo_list %}
+                            <tr>
+                                <th scope="row">{{ todo.pk }}</th>
+                                <td>{{ todo.title }}</td>
+                                <td>{{ todo.created_at }}</td>
+                                <td>{{ todo.deadline }}</td>
+                                <td>{{ todo.fineshed_at|default:"-" }}</td>
+                                <td>
+                                    <a href="{% url "todo_complete" pk=todo.pk %}" class="btn btn-primary btn-sm  {% if todo.fineshed_at %}disabled{% endif %}">Concluir</a>
+                                    <a href="{% url "todo_update" pk=todo.pk %}" class="btn btn-secondary btn-sm {% if todo.fineshed_at %}disabled{% endif %}">Editar</a>
+                                    <a href="{% url "todo_delete" pk=todo.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                                </td>
+                            </tr> 
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">Nenhuma tarefa registrada.</td>
+                        </tr>
+                        {% endfor %}
+                                                
+                    </tbody>
+                </table>
+
+                
+                    <ul class="pagination justify-content-center ">
+                        
+                        {% if page_obj.has_previous %}
+
+                            {% if request.GET.title %}
+                            <li class="page-item border border-secondary-subtle"><a href="?page=1&title={{ request.GET.title }}" class="page-link">&laquo; Primeira</a></li>
+                            <li class="page-item border border-secondary-subtle"><a href="?page={{ page_obj.previous_page_number }}&title={{ request.GET.title }}" class="page-link">&laquo; Anterior</a></li>
+                            {% else %}
+                            <li class="page-item border border-secondary-subtle"><a href="?page=1" class="page-link">&laquo; Primeira</a></li>
+                            <li class="page-item border border-secondary-subtle"><a href="?page={{ page_obj.previous_page_number }}" class="page-link">&laquo; Anterior</a></li>
+                            {% endif %}
+
+                        
+                        {% endif %}
+
+                        <li class="page-item border border-secondary-subtle">
+                            <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.</span>
+                        </li>
+                        
+                        {% if page_obj.has_next %}
+                            {% if request.GET.title %}
+                            <li class="page-item border border-secondary-subtle"><a class="page-link" href="?page={{ page_obj.next_page_number }}&title={{ request.GET.title }}">Próxima</a></li>
+                            <li class="page-item border border-secondary-subtle"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&title={{ request.GET.title }}">Última &raquo;</a></li>
+                            {% else %}
+                            <li class="page-item border border-secondary-subtle"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a></li>
+                            <li class="page-item border border-secondary-subtle"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a></li>
+                            {% endif %}
+                        {% endif %}
+
+                    </ul>
+                
+
+                
+{% endblock content %}
